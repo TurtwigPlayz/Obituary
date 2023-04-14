@@ -1,12 +1,12 @@
 import React from 'react';
 import Obituaries from './Obituaries';
 
-function App({obituaries}) {
+function App({ obituaries }) {
   return (
-    <div className="container mt-4">
-      <div className="row row-cols-4 g-4">
+    <div className="container-fluid">
+      <div className="row">
         {obituaries.map((obituary, index) => (
-          <div className="col" key={index}>
+          <div key={index} className="col-md-3">
             <Obituaries data={obituary} />
           </div>
         ))}
