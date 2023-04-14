@@ -1,12 +1,6 @@
 import React, { useState } from 'react';
-import Modal from 'react-bootstrap/Modal';
-import Form from 'react-bootstrap/Form';
-function Create({handleClose, show, getObituaries}){
-    const [BirthDate, setBirthDate] = useState("");
-    const [DeathDate, setDeathDate] = useState("");
-    const [DedName, setDedName] = useState("");
-    const [Image, setImage] = useState();
-    const [Loading, setLoading] = useState(false);
+import { Modal, Button, Form } from 'react-bootstrap';
+
 
     const createObituaries = async (image, Name, Birth, Death) => {
         setLoading(true);
@@ -38,9 +32,12 @@ function Create({handleClose, show, getObituaries}){
         console.log(Header)
         const formdata=new FormData();
         formdata.append("file", image);
-        const response = await fetch("https://ewzktoq6ec5htbnfcvpfmulmnq0abrhp.lambda-url.ca-central-1.on.aws/",{
+        const response = await fetch("https://swtevkjvrdwb4sbhqevq57lz4y0ypgqh.lambda-url.ca-central-1.on.aws/",{
           method: "POST",
-          headers: Header,
+          headers: {
+            "Content-Type": "multipart/form-data",
+            ...Header
+          },
           body: formdata//JSON.stringify(body)
         });
         console.log(response);
@@ -66,30 +63,78 @@ function Create({handleClose, show, getObituaries}){
                 </Form.Group>
 
 
-                <Form.Group className="mb-3" >
-                    <Form.Label>Deceased Name &nbsp;</Form.Label>
-                    <input className='rounded' type="text" placeholder="Enter Deceased Name" onChange={(e) => setDedName(e.target.value)}></input>
-                </Form.Group>
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    setIsLoading(true);
+    fetch('https://bhakaiz7jjw6pjou7qmy6gybqy0ohbrr.lambda-url.ca-central-1.on.aws/', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        name,
+        birth,
+        death,
+        obituary,
+        image,
+        polly
+      })
+    })
+    .then(() => {
+      getObituaries();
+      setIsLoading(false);
+      handleClose();
+    })
+    .catch((error) => {
+      console.error('Error:', error);
+      setIsLoading(false);
+    });
+  }
 
-                <div className="d-flex justify-content-between">
-                    <div className='d-flex flex-column'>
-                        <Form.Label>Birth Date</Form.Label>
-                        <input className='rounded' type='date' onChange={(date) => setBirthDate(date.target.value)}></input>
-                    </div>
-                    <div className='d-flex flex-column'>
-                        <Form.Label>Death Date</Form.Label>
-                        <input className='rounded' type='date' onChange={(date) => setDeathDate(date.target.value)}></input>
-                    </div>
-                </div>
-                {!Loading ?<button type="button" className="btn btn-primary my-3" onClick={() => createObituaries(Image, DedName, BirthDate, DeathDate)}>Create Obituary</button>:<button type="button" className="btn btn-secondary my-3" onClick={() => createObituaries(Image, DedName, BirthDate, DeathDate)} disabled>Loading...</button>}
-            </div>
-        </Modal.Body>
+  return (
+    <Modal show={show} onHide={handleClose}>
+      <Modal.Header closeButton>
+        <Modal.Title>Create New Obituary</Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        <Form onSubmit={handleSubmit}>
+          <Form.Group controlId="formName">
+            <Form.Label>Name</Form.Label>
+            <Form.Control required type="text" placeholder="Enter name" value={name} onChange={(e) => setName(e.target.value)} />
+          </Form.Group>
 
-       
+          <Form.Group controlId="formBirth">
+            <Form.Label>Birth Date</Form.Label>
+            <Form.Control required type="text" placeholder="Enter birth date" value={birth} onChange={(e) => setBirth(e.target.value)} />
+          </Form.Group>
 
-      </Modal>
-    </>
+          <Form.Group controlId="formDeath">
+            <Form.Label>Death Date</Form.Label>
+            <Form.Control required type="text" placeholder="Enter death date" value={death} onChange={(e) => setDeath(e.target.value)} />
+          </Form.Group>
+
+          <Form.Group controlId="formObituary">
+            <Form.Label>Obituary</Form.Label>
+            <Form.Control required as="textarea" rows={3} placeholder="Enter obituary" value={obituary} onChange={(e) => setObituary(e.target.value)} />
+          </Form.Group>
+
+          <Form.Group controlId="formImage">
+            <Form.Label>Image URL</Form.Label>
+            <Form.Control required type="text" placeholder="Enter image URL" value={image} onChange={(e) => setImage(e.target.value)} />
+          </Form.Group>
+
+          <Form.Group controlId="formPolly">
+            <Form.Label>Polly URL</Form.Label>
+            <Form.Control required type="text" placeholder="Enter Polly URL" value={polly} onChange={(e) => setPolly(e.target.value)} />
+          </Form.Group>
+
+          <Button variant="primary" type="submit" disabled={isLoading}>
+            {isLoading ? 'Saving...' : 'Save'}
+          </Button>
+        </Form>
+      </Modal.Body>
+    </Modal>
   );
-}
+};
 
 export default Create;

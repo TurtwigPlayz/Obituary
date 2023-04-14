@@ -10,7 +10,7 @@ function Layout() {
   
   const getObituaries = () => {
     console.log("Shit");
-    fetch("https://bhakaiz7jjw6pjou7qmy6gybqy0ohbrr.lambda-url.ca-central-1.on.aws/",{
+    fetch("https://zzedvqmmiomhdtvujhsflvi7wu0etjrt.lambda-url.ca-central-1.on.aws/",{
       method:"GET",
     })
       .then((response)=>{return response.json();})
