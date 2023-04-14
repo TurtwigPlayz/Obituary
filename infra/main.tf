@@ -89,7 +89,7 @@ resource "aws_lambda_function" "terraform_get_lambda_func" {
 filename                       = "../functions/get-obituaries/get.zip"
 function_name                  = "get-obituary-30115782"
 role                           = aws_iam_role.lambda_exec.arn
-handler                        = "main.get_handler"
+handler                        = "get-obituaries.get_handler"
 runtime                        = "python3.8"
 timeout = 30
 }
