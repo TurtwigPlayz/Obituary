@@ -51,7 +51,6 @@ function Create({handleClose, show, getObituaries}){
         await getObituaries();
         setLoading(false);
         handleClose();
-        window.close;
       }
     return (
         <>
