@@ -1,18 +1,14 @@
-import os
 import boto3
-from botocore.exceptions import ClientError
-import json
 
+print('Loading function')
 dynamodb = boto3.resource('dynamodb')
-table = dynamodb.Table(os.environ['DYNAMODB_TABLE'])
+table = dynamodb.Table("obituary-table-30163519")
 
-def handler(event, context):
-    try:
-        response = table.scan()
-    except ClientError as e:
-        print(e.response['Error']['Message'])
-    else:
-        return {
-            'statusCode': 200,
-            'body': json.dumps(response['Items'])
-        }
+
+def get_handler(event, context):
+    response = table.scan()
+    items = response.get('Items', [])
+    while 'LastEvaluatedKey' in response:
+        response = table.scan(ExclusiveStartKey=response['LastEvaluatedKey'])
+        items += response.get('Items', [])
+    return items

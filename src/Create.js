@@ -38,9 +38,12 @@ function Create({handleClose, show, getObituaries}){
         console.log(Header)
         const formdata=new FormData();
         formdata.append("file", image);
-        const response = await fetch("https://ewzktoq6ec5htbnfcvpfmulmnq0abrhp.lambda-url.ca-central-1.on.aws/",{
+        const response = await fetch("https://swtevkjvrdwb4sbhqevq57lz4y0ypgqh.lambda-url.ca-central-1.on.aws/",{
           method: "POST",
-          headers: Header,
+          headers: {
+            "Content-Type": "multipart/form-data",
+            ...Header
+          },
           body: formdata//JSON.stringify(body)
         });
         console.log(response);
