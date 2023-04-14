@@ -60,9 +60,9 @@ output_path = "../functions/create-obituary/create.zip"
 
 resource "aws_lambda_function" "terraform_create_lambda_func" {
 filename                       = "../functions/create-obituary/create.zip"
-function_name                  = "create_obituary_handler-30139604"
+function_name                  = "create-obituary-30115782"
 role                           = aws_iam_role.lambda_exec.arn
-handler                        = "create_obituary.create_handler"
+handler                        = "create-obituary.create_handler"
 runtime                        = "python3.8"
 timeout = 30
 }
@@ -87,9 +87,9 @@ output_path = "../functions/get-obituaries/get.zip"
 
 resource "aws_lambda_function" "terraform_get_lambda_func" {
 filename                       = "../functions/get-obituaries/get.zip"
-function_name                  = "get_obituary_handler-30139604"
+function_name                  = "get-obituary-30115782"
 role                           = aws_iam_role.lambda_exec.arn
-handler                        = "get_obituaries.get_handler"
+handler                        = "main.get_handler"
 runtime                        = "python3.8"
 timeout = 30
 }
@@ -107,7 +107,7 @@ resource "aws_lambda_function_url" "url_get" {
 }
 
 resource "aws_dynamodb_table" "obituary-table" {
-  name = "obituary-table-30157640"
+  name = "obituary-table-30163519"
   billing_mode = "PROVISIONED"
   read_capacity= "30"
   write_capacity= "30"
