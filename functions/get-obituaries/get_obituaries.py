@@ -1,8 +1,10 @@
+# add your get-obituaries function here
+
 import boto3
 
 print('Loading function')
 dynamodb = boto3.resource('dynamodb')
-table = dynamodb.Table("obituary-table-30163519")
+table = dynamodb.Table("obituary-table-30157640")
 
 
 def get_handler(event, context):

@@ -9,7 +9,7 @@ from base64 import b64decode
 ssm = boto3.client("ssm", "ca-central-1")
 polly = boto3.client("polly", "ca-central-1")
 dynamodb = boto3.resource("dynamodb")
-table=dynamodb.Table("obituary-table-30163519")
+table=dynamodb.Table("obituary-table-30157640")
 
 def get_cloudinary():
     response = ssm.get_parameters(
@@ -20,17 +20,14 @@ def get_cloudinary():
 
 def get_chatGPT():
     response = ssm.get_parameters(
-
-        Names=["chatGPT-Secret-key"],WithDecryption=True
+        Names=["ChatGPT"],WithDecryption=True
     )
     for parameter in response["Parameters"]:
         return parameter["Value"]
 
 def get_cloudinary_secret():
     response = ssm.get_parameters(
-
-        Names=["cloudinary-Secret-key"],WithDecryption=True
-
+        Names=["CloudSecret"],WithDecryption=True
     )
     for parameter in response["Parameters"]:
         return parameter["Value"]
@@ -51,20 +48,9 @@ def create_handler(event, context):
     signature = signature.hexdigest()
     Cloudpayload = {"api_key": api_key, "timestamp": timeStamp,"signature": signature}
     files = {'file': Image}
-
-    ImageCloudResponse = requests.post("https://api.cloudinary.com/v1_1/dachf4kcm/auto/upload", data=Cloudpayload, files=files)
-    if ImageCloudResponse.status_code != 200:
-        # Handle the error case here
-        return {"statusCode": 500, "body": "Error uploading image to Cloudinary"}
+    ImageCloudResponse = requests.post("https://api.cloudinary.com/v1_1/dokbawvgq/auto/upload", data=Cloudpayload, files=files)
     
-    try:
-        ImageURL = ImageCloudResponse.json()["secure_url"]
-    except KeyError:
-        # Handle the case where the JSON response does not contain the 'secure_url' key
-        return {"statusCode": 500, "body": "Error parsing response from Cloudinary"}
-
-    # ImageURL = ImageCloudResponse.json()["secure_url"]
-
+    ImageURL = ImageCloudResponse.json()["secure_url"]
     name = event["headers"]["name"]
     birth = event["headers"]["birth"]
     death = event["headers"]["death"]
@@ -73,9 +59,7 @@ def create_handler(event, context):
     #ChatGPT
     GPT_api_key = "Bearer "+str(get_chatGPT())
     url = "https://api.openai.com/v1/completions"
-
-    headers = {"Content-Type": "application/json", "Authorization": GPT_api_key}
-
+    headers = {"Content-Type": "application/json", "Authorization": "Bearer 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"}
     data = {"model": "text-davinci-003", "prompt": prompt, "max_tokens":600}
     
     GPTresponse = requests.post(url, headers=headers, json=data)
@@ -94,12 +78,13 @@ def create_handler(event, context):
     signature = signature.hexdigest()
     Cloudpayload = {"api_key": api_key, "timestamp": timeStamp,"signature": signature}
     files = {'file': response["AudioStream"]}
-
-    PollyCloudResponse = requests.post("https://api.cloudinary.com/v1_1/dachf4kcm/auto/upload", data=Cloudpayload, files=files)
-
+    PollyCloudResponse = requests.post("https://api.cloudinary.com/v1_1/dokbawvgq/auto/upload", data=Cloudpayload, files=files)
     
     PollyURL = PollyCloudResponse.json()["secure_url"]
     Items={"Name": name, "ImageURL": ImageURL, "PollyURL": PollyURL, "Death":death, "Birth":birth, "Obituary":Obituary}
     response = table.put_item(Item=Items)
     
     return response
+    
+    
+    
