@@ -20,6 +20,7 @@ def get_cloudinary():
 
 def get_chatGPT():
     response = ssm.get_parameters(
+
         Names=["chatGPT-Secret-key"],WithDecryption=True
     )
     for parameter in response["Parameters"]:
@@ -27,12 +28,13 @@ def get_chatGPT():
 
 def get_cloudinary_secret():
     response = ssm.get_parameters(
+
         Names=["cloudinary-Secret-key"],WithDecryption=True
+
     )
     for parameter in response["Parameters"]:
         return parameter["Value"]
 
-#https://api.cloudinary.com/v1_1/dokbawvgq/image/upload
 def create_handler(event, context):
     
     #Image
@@ -48,6 +50,7 @@ def create_handler(event, context):
     signature = signature.hexdigest()
     Cloudpayload = {"api_key": api_key, "timestamp": timeStamp,"signature": signature}
     files = {'file': Image}
+
     ImageCloudResponse = requests.post("https://api.cloudinary.com/v1_1/dachf4kcm/auto/upload", data=Cloudpayload, files=files)
     if ImageCloudResponse.status_code != 200:
         # Handle the error case here
@@ -60,6 +63,7 @@ def create_handler(event, context):
         return {"statusCode": 500, "body": "Error parsing response from Cloudinary"}
 
     # ImageURL = ImageCloudResponse.json()["secure_url"]
+
     name = event["headers"]["name"]
     birth = event["headers"]["birth"]
     death = event["headers"]["death"]
@@ -68,7 +72,9 @@ def create_handler(event, context):
     #ChatGPT
     GPT_api_key = "Bearer "+str(get_chatGPT())
     url = "https://api.openai.com/v1/completions"
+
     headers = {"Content-Type": "application/json", "Authorization": GPT_api_key}
+
     data = {"model": "text-davinci-003", "prompt": prompt, "max_tokens":600}
     
     GPTresponse = requests.post(url, headers=headers, json=data)
@@ -87,7 +93,9 @@ def create_handler(event, context):
     signature = signature.hexdigest()
     Cloudpayload = {"api_key": api_key, "timestamp": timeStamp,"signature": signature}
     files = {'file': response["AudioStream"]}
+
     PollyCloudResponse = requests.post("https://api.cloudinary.com/v1_1/dachf4kcm/auto/upload", data=Cloudpayload, files=files)
+
     
     PollyURL = PollyCloudResponse.json()["secure_url"]
     Items={"Name": name, "ImageURL": ImageURL, "PollyURL": PollyURL, "Death":death, "Birth":birth, "Obituary":Obituary}

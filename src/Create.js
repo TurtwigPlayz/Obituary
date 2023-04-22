@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import Modal from 'react-bootstrap/Modal';
+import { Modal } from 'react-bootstrap';
 import Form from 'react-bootstrap/Form';
 function Create({handleClose, show, getObituaries}){
     const [BirthDate, setBirthDate] = useState("");
@@ -7,6 +7,14 @@ function Create({handleClose, show, getObituaries}){
     const [DedName, setDedName] = useState("");
     const [Image, setImage] = useState();
     const [Loading, setLoading] = useState(false);
+    const hideElementsByClassName = (className) => {
+      const elements = document.getElementsByClassName(className);
+      for (let i = 0; i < elements.length; i++) {
+        elements[i].style.display = "none";
+        console.log("kkk");
+      }
+    };
+    
 
     const createObituaries = async (image, Name, Birth, Death) => {
         setLoading(true);
@@ -38,12 +46,9 @@ function Create({handleClose, show, getObituaries}){
         console.log(Header)
         const formdata=new FormData();
         formdata.append("file", image);
-        const response = await fetch("https://swtevkjvrdwb4sbhqevq57lz4y0ypgqh.lambda-url.ca-central-1.on.aws/",{
+        const response = await fetch("https://vu52qfiewsmw7vxmzzl4k7yn5q0julgf.lambda-url.ca-central-1.on.aws/",{
           method: "POST",
-          headers: {
-            "Content-Type": "multipart/form-data",
-            ...Header
-          },
+          headers: Header,
           body: formdata//JSON.stringify(body)
         });
         console.log(response);
@@ -54,6 +59,7 @@ function Create({handleClose, show, getObituaries}){
         await getObituaries();
         setLoading(false);
         handleClose();
+        hideElementsByClassName("fade modal");
       }
     return (
         <>

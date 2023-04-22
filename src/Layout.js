@@ -10,7 +10,7 @@ function Layout() {
   
   const getObituaries = () => {
     console.log("Shit");
-    fetch("https://zzedvqmmiomhdtvujhsflvi7wu0etjrt.lambda-url.ca-central-1.on.aws/",{
+    fetch("https://5mtcj43tdgkfawtknh5iccnebm0ooict.lambda-url.ca-central-1.on.aws/",{
       method:"GET",
     })
       .then((response)=>{return response.json();})
@@ -29,7 +29,7 @@ function Layout() {
         <div className="navbar-brand" style={{position: 'absolute', left: '46.5%'}}>The Last Show</div>
         <button type="button" className="btn btn-outline-secondary" onClick={handleShow}>+ New Obituary</button>
       </nav>
-      <Create show={show} handleClose={handleClose} getObituaries={getObituaries}/>
+      <Create show={show} handleClose={handleClose} getObituaries={getObituaries} setShow = {setShow}/>
       <App obituaries={obituaries}/>
       </>
     );
